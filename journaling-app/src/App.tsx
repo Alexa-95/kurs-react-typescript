@@ -1,9 +1,11 @@
 import React from 'react'
+import Tabs from './components/Tabs'
+import { AddJournalForm } from './components/AddJournalForm'
 
 const App = () => {
   return (
       <>
-          <div className="=flex flex-col w-[640px] py-4 mx-auto">
+          <div className="=flex flex-col w-160 py-4 mx-auto">
               <div className="flex flex-col gap-2 rounded-xl bg-white p-4">
                   {/* Header */}
                   <header>
@@ -18,8 +20,10 @@ const App = () => {
                   </p>
 
                   {/* Tabs */}
+                  <Tabs />
 
                   {/* Form */}
+                  <AddJournalForm />
               </div>
           </div>
       </>
