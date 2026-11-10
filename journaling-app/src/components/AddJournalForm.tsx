@@ -6,7 +6,7 @@ const schema = z.object({
     title: z.string({ error: 'The Journal title is required.' }).min(5, {
         message: "The journal title must be at least 5 characters."
     }),
-    emotions: z.string({ error: 'Please specify emotion' }).min(3, {
+    emotion: z.string({ error: 'Please specify emotion' }).min(3, {
         message: 'The emotions field must have at least 3 characters.'
     }),
     body: z
@@ -27,11 +27,57 @@ export const AddJournalForm = () => {
     })
 
     const onFormSubmit = (data: FieldValues) => {
-        console.log(data)
+        // 1. Crate unique ID for the journa; entry.
+        const uuid = crypto.randomUUID();
+        data.id = uuid;
+
+        // 2. Add the current timestamp for the journal entry.
+        const now = new Date();
+        data.createdAt = now.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        // 3. Retrieve the journa; entries from storage.
+        const hasJournals = localStorage.getItem('journals')
+        const journalEntries = hasJournals ? JSON.parse(hasJournals) : [];
+
+        // 4. Save the journal entry to storage.
+        journalEntries.push(data)
+        const newEntry = JSON.stringify(journalEntries)
+        localStorage.setItem('journals', newEntry)
+        openDialog();
+        reset();
+    }
+
+    const openDialog = () => { 
+        // document.getElementById('success_modal').showModal()
+
+        const modal = document.getElementById('success_modal');
+
+        if (modal instanceof HTMLDialogElement) {
+            modal.showModal();
+        }
     }
 
     return (
         <>
+            {/* Open the modal using document.getElementById('ID').showModal() method */}
+            <dialog id="success_modal" className="modal">
+                <div className="modal-box">
+                    <h3 className="font-bold text-lg">Succesful!</h3>
+                    <p className="py-4">
+                        Journal entry was successfully saved!
+                    </p>
+                    <div className="modal-action">
+                        <form method="dialog">
+                            {/* if there is a button in form, it will close the modal */}
+                            <button className="btn">Close</button>
+                        </form>
+                    </div>
+                </div>
+            </dialog>
             <form
                 className="flex flex-col gap-3"
                 onSubmit={handleSubmit(onFormSubmit)}
@@ -56,18 +102,18 @@ export const AddJournalForm = () => {
                 )}
                 <label htmlFor="emotions">How are you feeling today?</label>
                 <select
-                    id="emotions"
+                    id="emotion"
                     defaultValue="Pick a color"
                     className="select select-bordered w-full"
-                    {...register('emotions')}
+                    {...register('emotion')}
                 >
                     <option>Happy</option>
                     <option>Neutral</option>
                     <option>Sad</option>
                 </select>
-                {errors.emotions && (
+                {errors.emotion && (
                     <span className="-mt-3 font-medium text-red-500">
-                        {errors.emotions.message}
+                        {errors.emotion.message}
                     </span>
                 )}
                 <textarea

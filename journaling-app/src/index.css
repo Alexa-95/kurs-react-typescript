@@ -1,4 +1,8 @@
 @import "tailwindcss";
+@theme {
+  --font-playfair: "Playfair Display", sans-serif;
+}
+
 @plugin "daisyui" {
     theme: light
 }
